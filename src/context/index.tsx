@@ -1,31 +1,27 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useReducer } from "react";
-import { BackHandler } from "react-native";
-import { List } from "./type";
+import { Library, List } from "./type";
 
-
-type State = {
+export type State = {
 	loading: boolean;
+	error?: string;
 	list: Array<List>;
-	fav: Array<List>;
+	library: Array<Library>;
 };
 
-enum ActionTypeEnum {
-	REQUEST = "REQUEST_LISTA",
-	
+export enum ActionTypeEnum {
+	REQUEST = "REQUEST",
+	SUCCESS_LIBRARY = "SUCCESS_LIBRARY",
 	SUCCESS_LIST = "FETCH_LIST",
-	ADD_LIST = "ADD_LIST",
-	REMOVE_LIST = "REMOVE_LIST",
-	CLEAN_LIST = "CLEAN_LIST",
-	
+	FETCH_ERROR = "FETCH_ERROR",
+
 	TOGGLE_FAV_LIST = "TOGGLE_FAV_LIST",
 };
 
 type Action = 
 	| { type: ActionTypeEnum; }
-	| { type: ActionTypeEnum; payload: string|State|List; };
+	| { type: ActionTypeEnum; payload: string|Library[]|List[]; };
 
-type SetState = (action: Action) => void;
+export type SetState = (action: Action) => void;
 	
 type Dispatch = <T extends AnyFunc>(fn: T) => void;
 
@@ -44,62 +40,46 @@ type AnyFunc = (...arg: any[]) => any;
 const initialState: State = {
 	loading: false,
 	list: [],
-	fav: []
+	library: [],
 };
 
 const reducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case ActionTypeEnum.REQUEST:
 			return { ...state, loading: true };
-		case ActionTypeEnum.SUCCESS_LIST:
-			return { 
+		case ActionTypeEnum.SUCCESS_LIBRARY:
+			return {
 				...state,
-				...("payload" in action) 
-					? (!Array.isArray(action.payload))
-						? { ...(action.payload as State) }
-						: state
-					: state,
 				loading: false,
+				error: undefined,
+				library: ("payload" in action)
+					? action.payload as Library[]
+					: state.library
 			};
-		case ActionTypeEnum.ADD_LIST:
-			return { 
+		case ActionTypeEnum.SUCCESS_LIST:
+			return {
 				...state,
 				loading: false,
+				error: undefined,
 				list: ("payload" in action)
-					? (typeof action.payload !== "string")
-						? [ ...state.list, action.payload as List ]
-						: state.list
+					? action.payload as List[]
 					: state.list
 			};
 		case ActionTypeEnum.TOGGLE_FAV_LIST:
 			return { 
 				...state,
 				loading: false,
-				fav: ("payload" in action)
-					? (state.list.find((list: List) => list.id === action.payload))
-						? state.list.filter((list: List) => list.fav).concat(state.list.find((list: List) => list.id === action.payload))
-						: state.list.filter((list: List) => list.fav)
-					: state.list.filter((list: List) => list.fav),
-				list: ("payload" in action)
-					? state.list.map(
-						(list: List) => list.id === action.payload
-							? { ...list, fav: !list.fav }
-							: list)
-					: state.list,
+				error: undefined,
 			};
-		case ActionTypeEnum.REMOVE_LIST:
+	
+		case ActionTypeEnum.FETCH_ERROR:
 			return {
 				...state,
 				loading: false,
-				list: ("payload" in action)
-					? state.list.filter((list: List) => list.id !== action.payload)
-					: state.list,
-				fav: ("payload" in action)
-					? state.fav.filter((list: List) => list.id !== action.payload)
-					: state.fav,
+				error: ("payload" in action)
+					? action.payload as string
+					: "unknown error"
 			};
-		case ActionTypeEnum.CLEAN_LIST:
-			return initialState
 
 		default:
 			const _unreachable: never = action.type;
@@ -131,38 +111,4 @@ export const useStateContext = () => {
 	if (!context) throw new Error("Please Provide with StateContextProvider");
 	
 	return context;
-};
-
-
-// Actions
-export const fetchList = () => (dispatch: SetState) => {
-	dispatch({ type: ActionTypeEnum.REQUEST });
-	AsyncStorage.getItem("application-state").then(value => {
-		if (value) dispatch({ type: ActionTypeEnum.SUCCESS_LIST, payload: JSON.parse(value) });
-	});
-};
-
-export const addList = (data: List) => (dispatch: SetState) => {
-	dispatch({ type: ActionTypeEnum.REQUEST });
-	dispatch({ type: ActionTypeEnum.ADD_LIST, payload: data });
-};
-
-export const toggleFav = (id_: string) => (dispatch: SetState) => {
-	dispatch({ type: ActionTypeEnum.REQUEST });
-	dispatch({ type: ActionTypeEnum.TOGGLE_FAV_LIST, payload: id_ })
-};
-
-export const removeList = (id_: string) => (dispatch: SetState) => {
-	dispatch({ type: ActionTypeEnum.REQUEST });
-	dispatch({ type: ActionTypeEnum.REMOVE_LIST, payload: id_ });
-};
-
-export const allClean = () => (dispatch: SetState) => {
-	dispatch({ type: ActionTypeEnum.REQUEST });
-	dispatch({ type: ActionTypeEnum.CLEAN_LIST });
-};
-
-export const exitApp = () => (_dipatch: SetState, state: State) => {
-	AsyncStorage.setItem("application-state", JSON.stringify(state));
-	BackHandler.exitApp();
 };

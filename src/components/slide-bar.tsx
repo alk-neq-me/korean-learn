@@ -24,6 +24,12 @@ export default function SlideBar(props: DrawerContentComponentProps) {
 				<Pressable onPress={navigate("Detail")} style={styles.button}>
 					<Text>Favoites</Text>
 				</Pressable>
+				<Pressable onPress={navigate("Music")} style={styles.button}>
+					<Text>Music</Text>
+				</Pressable>
+				<Pressable onPress={navigate("Setting")} style={styles.button}>
+					<Text>Setting</Text>
+				</Pressable>
 			</View>
 		</SafeAreaView>
 	);

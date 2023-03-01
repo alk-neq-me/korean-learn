@@ -1,13 +1,14 @@
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import { Button, FlatList, Pressable, StyleSheet, Text, View, BackHandler, Alert, SafeAreaView, Platform, NativeModules } from 'react-native';
+import { SafeAreaView, Platform, NativeModules } from 'react-native';
 import { RootScreenParamList } from '..';
-import { addList, allClean, fetchList, removeList, exitApp, toggleFav, useStateContext } from '../context';
-import { List } from '../context/type';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { useCallback, useEffect } from 'react';
+import { useStateContext } from '../context';
+import { allClean, fetchLibrary, fetchList } from '../context/actions';
+import { Box, StatusBar, Text, Button, FlatList, Pressable } from 'native-base';
 
 type Props = {
   navigation: DrawerNavigationProp<RootScreenParamList, "Home">;
+  // route: RouteProp<RootScreenParamList, "Home">;
 };
 
 const Home = (props: Props) => {
@@ -15,136 +16,40 @@ const Home = (props: Props) => {
   const {state, dispatch} = useStateContext();
   
   useEffect(() => {
-    dispatch(fetchList());
+    dispatch(fetchLibrary());
   }, []);
   
-  useEffect(() => {
-    const backAction = () => {
-      Alert.alert('Hold on!', 'Are you sure want to exit?', [
-        {
-          text: "Cancel",
-          onPress: () => null,
-          style: 'cancel'
-        },
-        {
-          text: "YES",
-          onPress: () => dispatch(exitApp()),
-        }
-      ]);
-      return true;
-    };
-    
-    const backhandler = BackHandler.addEventListener('hardwareBackPress', backAction);
-    
-    return () => backhandler.remove();
+  const navigate = useCallback((id_: number) => {
+    dispatch(fetchList(id_));
+    navigation.navigate("List");
   }, []);
-  
-  const onChange = () => {
-    const data: List = {
-      id: `${Date.now()}`,
-      title: `Hello, Today ${(new Date()).getDate()}`,
-      fav: false,
-    }
-    dispatch(addList(data));
-  };
-  
-  const handleFav = (id_: string) => () => {
-    dispatch(toggleFav(id_));
-  };
-  
-  const handleRemove = (id_: string) => () => {
-    dispatch(removeList(id_));
-  };
-  
-  const handleExit = () => {
-    dispatch(exitApp());
-  };
-  
-  const handleClear = () => {
-    dispatch(allClean());
-  };
-  
-  // const onNavigate = (to: keyof RootScreenParamList) => () => {
-  //   try {
-  //     navigation.navigate(to);
-  //   } catch (err) {
-  //     console.log(err)
-  //   }
-  // }
-
-  const onNavigate = () => {
-    try {
-      navigation.navigate("Detail");
-    } catch (err) {
-      console.log(err)
-    }
-  }
   
   return (
     <SafeAreaView style={{
-      display: "flex",
-      flexDirection: "column",
-      flex: 10,
       paddingTop: Platform.OS === "android" ? NativeModules.StatusBarManager.HEIGHT : 0
     }}>
       <StatusBar />
-      <Button title="exit" onPress={handleExit} />
-      <Button title="all clean" onPress={handleClear} />
       <FlatList
-        data={state.list}
-        keyExtractor={(_, index) => `${index}`}
-        renderItem={({item}) => (
-          <View style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-around",
-            marginTop: 20,
-          }}>
-            <Text>{item.title}</Text>
-            <Pressable onPress={handleFav(item.id)} style={{
-              ...styles.button,
-              backgroundColor: item.fav ? "lightblue" : "white"
-            }}>
-              <Text>Fav</Text>
-            </Pressable>
-            <Pressable onPress={handleRemove(item.id)} style={styles.button}>
-              <Text>Remove</Text>
-            </Pressable>
-          </View>
+        horizontal
+        data={state.library}
+        renderItem={(info) => (
+          <Pressable onPress={() => navigate(info.item.id)}>
+            <Box
+              bg="yellow.200"
+              px="76px"
+              py="50px"
+              m={2}
+              borderRadius={20}
+              shadow={2}
+            >
+              <Text>{ info.item.section }</Text>
+            </Box>
+          </Pressable>
         )}
       />
-      
-      <View>
-        <Pressable onPress={onNavigate} style={styles.button}>
-          <Text>Detail</Text>
-        </Pressable>
-        <Pressable onPress={onChange} style={styles.button}>
-          <Text>Add</Text>
-        </Pressable>
-      </View>
-      
+      <Button onPress={() => dispatch(allClean())}>Clean</Button>
     </SafeAreaView>
   )
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 50,
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: 'lightblue',
-  },
-});
 
 export default Home;
