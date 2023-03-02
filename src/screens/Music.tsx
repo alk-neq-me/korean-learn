@@ -1,7 +1,6 @@
 import { NotificationAction } from "expo-notifications";
 import { Box, Button } from "native-base";
 import { useRef } from "react";
-import { Platform } from "react-native";
 import YoutubeIframe, { YoutubeIframeRef } from "react-native-youtube-iframe";
 import { useNotification } from "../hooks/use-notification";
 
@@ -22,7 +21,7 @@ export default function() {
     
     const actions: NotificationAction[] = [
       { 
-        buttonTitle: "Play",
+        buttonTitle: "",
         identifier: "play",
         options: {
           opensAppToForeground: false
@@ -51,6 +50,7 @@ export default function() {
         title: "Now playing",
         body: "Olivia Rodrigo",
         sound: true,
+        sticky: false,
         categoryIdentifier: "playback",
       },
       trigger: null

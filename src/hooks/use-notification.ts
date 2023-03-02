@@ -14,11 +14,13 @@ export function useNotification() {
 	  let token;
 
 	  if (Platform.OS === 'android') {
-	    await Notifications.setNotificationChannelAsync('default', {
-	      name: 'default',
+	    await Notifications.setNotificationChannelAsync('media-player', {
+	      name: 'Media Player',
+				sound: "default",
 	      importance: Notifications.AndroidImportance.MAX,
 	      vibrationPattern: [0, 250, 250, 250],
 	      lightColor: '#FF231F7C',
+				audioAttributes: {contentType: Notifications.AndroidAudioContentType.MUSIC},
 	    });
 	  }
 
@@ -35,7 +37,7 @@ export function useNotification() {
 	    }
 			try {
 		    token = (await Notifications.getExpoPushTokenAsync()).data;
-		    console.log(token);
+		    console.log("Token", token);
 			} catch (err) {
 				console.log("Failed", err);
 			};
