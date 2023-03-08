@@ -18,10 +18,6 @@ export function serviceQuery(
 					(_, result) => {
 						callback(result);
 					},
-					// (_, err) => {
-					// 	console.error(err)
-					// 	return false;
-					// },
 				);
 			});
 		})

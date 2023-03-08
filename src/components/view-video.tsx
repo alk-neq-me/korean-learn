@@ -7,6 +7,7 @@ import VideoItem from "./VideoItem";
 import { useCallback, useRef } from "react";
 import { useNotification } from "../hooks/use-notification";
 import { NotificationAction } from "expo-notifications";
+import { readyMusic } from "../context/actions/music.actions";
 
 type Props = {
 	onClose: () => void;
@@ -90,7 +91,7 @@ export default function ViewVideo(props: Props) {
 	}, []);
 	
 	const handelOnReadyVideo = useCallback(() => {
-		// dispatch(fetchMusicChange({ ...music, loading: false, error: undefined }));
+		dispatch(readyMusic());
 	}, []);
 	
 	const handelOnErrorVideo = useCallback((error: string) => {
@@ -118,7 +119,7 @@ export default function ViewVideo(props: Props) {
 			</HStack>
 			
 			<VStack position="relative">
-				{loading && (
+				{music.video_loading && (
 					<VStack h={200} alignItems="center" justifyContent="center" bg="gray.200" borderRadius="10px" mb={4}>
 						<Spinner size="lg" />
 					</VStack>
@@ -129,7 +130,7 @@ export default function ViewVideo(props: Props) {
 					</VStack>
 				)}
 				<YoutubeIframe
-					height={(loading || error) ? 0 : 230}
+					height={(music.video_loading || error) ? 0 : 230}
 					onReady={handelOnReadyVideo}
 					onError={handelOnErrorVideo}
 					videoId={music.videoId}

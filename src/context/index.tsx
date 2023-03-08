@@ -26,6 +26,7 @@ export enum ActionTypeEnum {
 	SUCCESS_SELECTED_MUSIC = "SUCCESS_SELECTED_MUSIC",
 	FETCH_ERROR_SELECTED_MUSIC = "FETCH_ERROR_SELECTED_MUSIC",
 	TOGGLE_SELECTED_MUSIC = "TOGGLE_SELECTED_MUSIC",
+	READY_SELECTED_MUSIC = "READY_SELECTED_MUSIC",
 };
 
 type Payload = 
@@ -162,9 +163,17 @@ const reducer = (state: State, action: Action): State => {
 					...state.selectedVideo,
 					loading: false,
 					error: undefined,
-					music: ("payload" in action)
-						? { ...state.selectedVideo.music as Music, playing: !state.selectedVideo.music?.playing }
-						: state.selectedVideo.music
+					music: { ...state.selectedVideo.music as Music, playing: !state.selectedVideo.music?.playing }
+				}
+			};
+		case ActionTypeEnum.READY_SELECTED_MUSIC:
+			return {
+				...state,
+				selectedVideo: {
+					...state.selectedVideo,
+					loading: false,
+					error: undefined,
+					music: { ...state.selectedVideo.music as Music, video_loading: false }
 				}
 			};
 	

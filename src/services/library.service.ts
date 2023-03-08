@@ -1,8 +1,8 @@
 import { ActionTypeEnum, Dispatch } from "../context";
 import { Library } from "../context/type";
-import createQueryFilter from "../utilits/createQueryFilter";
+import createQueryFilter from "../utilits/create-query-filter";
+import { serviceQuery } from "./service-query";
 import { QueryService } from "./type";
-import { serviceQuery } from "./use-query";
 
 
 export default class LibraryService {

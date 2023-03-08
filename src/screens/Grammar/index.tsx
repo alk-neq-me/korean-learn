@@ -16,7 +16,7 @@ export default function() {
     <Stack.Navigator
 			initialRouteName="Intro"
 			screenOptions={{
-        headerShown: false
+        headerShown: true
       }}
     >
       <Stack.Screen name="Intro" component={Intro} />

@@ -4,15 +4,19 @@ import { useNavigation } from "@react-navigation/native";
 import { HStack, IconButton } from "native-base";
 import { useCallback } from "react";
 import { RootScreenParamList } from "..";
+import { useStateContext } from "../context";
+import { getFavoriteList } from "../context/actions/list.actions";
 
 export default function Navbar() {
 	const navigation = useNavigation<DrawerNavigationProp<RootScreenParamList>>();
 	const handleMenuButton = useCallback(() => {
 		navigation.openDrawer();
 	}, []);
+	const { dispatch } = useStateContext();
 	
 	const handleFavOpen = useCallback(() => {
-		navigation.navigate("Fav");
+		dispatch(getFavoriteList());
+		navigation.navigate("List", { isFavorite: true });
 	}, []);
 	
 	return (

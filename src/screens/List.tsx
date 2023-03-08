@@ -1,14 +1,22 @@
 import { AntDesign } from "@expo/vector-icons";
+import { RouteProp } from "@react-navigation/native";
 import { Box, FlatList, IconButton, Pressable, Text } from "native-base";
 import { useCallback } from "react";
-import FullErrorPage from "../../components/full-error";
-import FullLoading from "../../components/full-loading";
-import Masthead from "../../components/masthead";
-import Navbar from "../../components/navbar";
-import { useStateContext } from "../../context";
-import { toggleFavorite } from "../../context/actions/list.actions";
+import { RefreshControl } from "react-native";
+import { RootScreenParamList } from "..";
+import FullErrorPage from "../components/full-error";
+import Masthead from "../components/masthead";
+import Navbar from "../components/navbar";
+import { useStateContext } from "../context";
+import { getListByLibraryId, toggleFavorite } from "../context/actions/list.actions";
 
-export default function List() {
+type Props = {
+  route?: RouteProp<RootScreenParamList, "List">;
+};
+
+export default function List(props: Props) {
+	const isFavorite = props.route?.params.isFavorite;
+	
 	const {
 		state: {
 			list
@@ -20,15 +28,19 @@ export default function List() {
 	const loading = list.loading;
 	const error = list.error;
 	
-	const title = rows[0]?.library_name || "Book";
+	const title = 
+		!isFavorite 
+		? (rows[0]?.library_name || "Book")
+		: "Favorite";
 	
 	const handleToggleFavorite = useCallback((id_: number) => {
 		dispatch(toggleFavorite(id_));
 	}, []);
 	
-	if (loading) return (
-		<FullLoading />
-	)
+	const onRefresh = useCallback(() => {
+		const id_ = rows[0].library_id;
+		if (id_) dispatch(getListByLibraryId(id_));
+	}, [rows[0]?.library_id]);
 	
 	if (error) return (
 		<FullErrorPage error={error} />
@@ -36,11 +48,13 @@ export default function List() {
 	
 	return (
 		<Box>
-			<Masthead image={require("../../../assets/images/trajectory-education.png")} title={title}>
+			<Masthead image={require("../../assets/images/trajectory-education.png")} title={title}>
 				<Navbar />
 			</Masthead>
 			<FlatList
-				data={rows}
+				data={
+					!isFavorite ? rows : rows.filter(row => row.fav)
+				}
 				display="flex"
 				renderItem={(info) => (
 					<Pressable
@@ -66,6 +80,9 @@ export default function List() {
 						/>
 					</Pressable>
 				)}
+				refreshControl={
+					<RefreshControl refreshing={loading} onRefresh={onRefresh} />
+				}
 			/>
 		</Box>
 	);

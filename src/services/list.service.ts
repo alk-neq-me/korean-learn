@@ -1,7 +1,7 @@
 import { ActionTypeEnum, Dispatch } from "../context";
 import { List } from "../context/type";
-import createQueryFilter from "../utilits/createQueryFilter";
-import { serviceQuery } from "./use-query";
+import createQueryFilter from "../utilits/create-query-filter";
+import { serviceQuery } from "./service-query";
 
 export default class ListService {
 	static async getListByLibraryId(dispatch: Dispatch, id_: number): Promise<void> {

@@ -1,6 +1,7 @@
 import { Box, Image, Text, Pressable } from "native-base";
 import { useCallback } from "react";
 import { useStateContext } from "../context";
+import { initMusic } from "../context/actions/music.actions";
 import { Music } from "../context/type";
 
 type Props = {
@@ -10,10 +11,12 @@ type Props = {
 
 export default function VideoItem(props: Props) {
 	const { video, openModal } = props;
-	const { dispatch } = useStateContext();
+	const {
+		dispatch
+	} = useStateContext();
 	
 	const handleClickVideo = useCallback(() => {
-		// dispatch(initSelectedVideo(video?.id_));
+		dispatch(initMusic(video));
 		if (openModal) openModal();
 	}, []);
 

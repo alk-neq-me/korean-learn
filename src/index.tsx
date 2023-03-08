@@ -5,23 +5,17 @@ import Music from "./screens/Music";
 import Grammar from './screens/Grammar';
 import Setting from "./screens/Setting";
 import About from "./screens/About";
-import List from "./screens/Lists";
-import FavoriteList from "./screens/Favorite";
-
-type ScreenParams = {
-	isMain?: boolean
-} | undefined;
+import List from "./screens/List";
 
 export type RootScreenParamList = {
-	Home: ScreenParams;
-	List: ScreenParams;
-	Fav: ScreenParams;
+	Home: undefined;
+	List: { isFavorite: boolean };
 	
-	Music: ScreenParams;
-	Grammar: ScreenParams;
-	Setting: ScreenParams;
+	Music: undefined;
+	Grammar: undefined;
+	Setting: undefined;
 	
-	About: ScreenParams;
+	About: undefined;
 }
 
 const Drawer = createDrawerNavigator();
@@ -37,13 +31,12 @@ export default function App() {
 				overlayColor: "rgba(0,0,0,.5)"
 			}}
 		>
-			<Drawer.Screen name="Home" component={Home} initialParams={{ isMain: true }} />
-			<Drawer.Screen name="List" component={List} initialParams={{ isMain: false }} />
-			<Drawer.Screen name="Fav" component={FavoriteList} initialParams={{ isMain: false }} />
-			<Drawer.Screen name="Music" component={Music} initialParams={{ isMain: false }} />
-			<Drawer.Screen name="Grammar" component={Grammar} initialParams={{ isMain: false }} />
-			<Drawer.Screen name="Setting" component={Setting} initialParams={{ isMain: false }} />
-			<Drawer.Screen name="About" component={About} initialParams={{ isMain: false }} />
+			<Drawer.Screen name="Home" component={Home} />
+			<Drawer.Screen name="List" component={List} initialParams={{ isFavorite: false }} />
+			<Drawer.Screen name="Music" component={Music} />
+			<Drawer.Screen name="Grammar" component={Grammar} />
+			<Drawer.Screen name="Setting" component={Setting} />
+			<Drawer.Screen name="About" component={About} />
 		</Drawer.Navigator>
 	);
 };

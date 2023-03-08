@@ -22,6 +22,7 @@ export type Music = {
 	videoId: string;
 	thumbnails?: string;	
 	playing: boolean;
+	video_loading: boolean;
 };
 
 export type Settings = {
@@ -50,7 +51,7 @@ export type Settings = {
 
 /// ---------  Application State  ---------
 
-type BaseType = {
+export type BaseType = {
 	loading: boolean;
 	error?: string;
 };
