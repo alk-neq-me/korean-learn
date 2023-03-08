@@ -6,7 +6,7 @@ import Grammar from './screens/Grammar';
 import Setting from "./screens/Setting";
 import About from "./screens/About";
 import List from "./screens/Lists";
-import FavList from "./screens/Fav";
+import FavoriteList from "./screens/Favorite";
 
 type ScreenParams = {
 	isMain?: boolean
@@ -39,7 +39,7 @@ export default function App() {
 		>
 			<Drawer.Screen name="Home" component={Home} initialParams={{ isMain: true }} />
 			<Drawer.Screen name="List" component={List} initialParams={{ isMain: false }} />
-			<Drawer.Screen name="Fav" component={FavList} initialParams={{ isMain: false }} />
+			<Drawer.Screen name="Fav" component={FavoriteList} initialParams={{ isMain: false }} />
 			<Drawer.Screen name="Music" component={Music} initialParams={{ isMain: false }} />
 			<Drawer.Screen name="Grammar" component={Grammar} initialParams={{ isMain: false }} />
 			<Drawer.Screen name="Setting" component={Setting} initialParams={{ isMain: false }} />

@@ -20,7 +20,7 @@ export function serviceQuery(
 					},
 					// (_, err) => {
 					// 	console.error(err)
-					// 	return true;
+					// 	return false;
 					// },
 				);
 			});

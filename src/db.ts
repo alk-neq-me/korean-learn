@@ -1,6 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
+import { cleanService } from './services/settings.service';
 
 const dbFile = "sqlite.db";
 
@@ -27,7 +28,8 @@ export async function openDatabase(): Promise<SQLite.WebSQLDatabase> {
 		}],
 		false,
 		(err, _result) => {
-			if (err) console.error(err)
+			if (err) 
+				console.error(err)
 		});
 	});
 };

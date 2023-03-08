@@ -1,16 +1,19 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Box, FlatList, IconButton, Pressable, Spinner, Text } from "native-base";
+import { Box, FlatList, IconButton, Pressable, Text } from "native-base";
 import { useCallback } from "react";
 import FullErrorPage from "../../components/full-error";
+import FullLoading from "../../components/full-loading";
 import Masthead from "../../components/masthead";
 import Navbar from "../../components/navbar";
 import { useStateContext } from "../../context";
+import { toggleFavorite } from "../../context/actions/list.actions";
 
 export default function List() {
 	const {
 		state: {
 			list
 		},
+		dispatch
 	} = useStateContext();
 	
 	const rows = list.rows;
@@ -19,21 +22,12 @@ export default function List() {
 	
 	const title = rows[0]?.library_name || "Book";
 	
-	const handleFav = useCallback((id_: number) => {
-		// dispatch(toggleFav(id_));
-		console.log(id_);
+	const handleToggleFavorite = useCallback((id_: number) => {
+		dispatch(toggleFavorite(id_));
 	}, []);
 	
 	if (loading) return (
-		<Box
-			h="full"
-			display="flex"
-			flexDirection="column"
-			alignItems="center"
-			justifyContent="center"
-		>
-			<Spinner size="lg" />
-		</Box>
+		<FullLoading />
 	)
 	
 	if (error) return (
@@ -64,7 +58,7 @@ export default function List() {
 						</Box>
 						<IconButton 
 							borderRadius={100}
-							onPress={() => handleFav(info.item.id)}
+							onPress={() => handleToggleFavorite(info.item.id)}
 							_icon={{
 								as: AntDesign,
 								name: info.item.fav ? "heart" : "hearto"
