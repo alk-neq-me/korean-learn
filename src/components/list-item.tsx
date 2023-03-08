@@ -1,29 +1,31 @@
-import { Pressable, Text } from "native-base";
+import { Pressable, Text, Box } from "native-base";
 
 type Props = {
 	label: string;
 	secondaryLabel?: string;
-	onPress: () => void;
-	leftIcon?: React.ReactElement;
-	rightIcon?: React.ReactElement;
+	rightElement?: () => React.ReactElement;
+	leftElement?: () => React.ReactElement;
 };
 
 export default function ListItem(props: Props) {
-	const { label, secondaryLabel, onPress, leftIcon, rightIcon } = props;
+	const { label, secondaryLabel, rightElement, leftElement } = props;
 	
 	return (
 		<Pressable
-			w="full"
-			display="flex"
+			p={2}
+			bg="blue.200"
+			m={1}
 			flexDirection="row"
 			alignItems="center"
 			justifyContent="space-between"
-			onPress={onPress}
+			borderRadius={5}
 		>
-			{ leftIcon && leftIcon }
-			{ <Text>{label}</Text> }
-			{ secondaryLabel && <Text>{secondaryLabel}</Text> } 
-			{ rightIcon && rightIcon }
+			{leftElement && leftElement()}
+			<Box>
+				<Text>{label}</Text>
+				<Text>{secondaryLabel}</Text>
+			</Box>
+			{rightElement && rightElement()}
 		</Pressable>
 	);
 };

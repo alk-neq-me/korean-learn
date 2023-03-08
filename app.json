@@ -27,12 +27,11 @@
         ]
       },
       "package": "com.marcoexexx.marco",
-      "versionCode": 1
-    },
-    "extra": {
-      "eas": {
-        "projectId": "d5369667-9e1a-4abd-a7bb-1b18b2e7a0de"
-      }
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "plugins": [
       [
@@ -41,6 +40,11 @@
           "microphonePermission": "Allow me to access your microphone"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d5369667-9e1a-4abd-a7bb-1b18b2e7a0de"
+      }
+    }
   }
 }

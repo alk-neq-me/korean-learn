@@ -1,51 +1,32 @@
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
-import { NativeModules, Platform, Pressable, SafeAreaView, StatusBar, StyleSheet, View, Text } from "react-native";
+import {Pressable, Text, VStack } from "native-base";
 import { RootScreenParamList } from "..";
 
 export default function SlideBar(props: DrawerContentComponentProps) {
 	const { navigation } = props;
+	const pagesField: (keyof RootScreenParamList)[] = ["Home", "Music", "Grammar", "Setting"];
 	
 	const navigate = (to: keyof RootScreenParamList) => () => {
 		navigation.navigate(to)
 	};
 	
 	return (
-		<SafeAreaView style={styles.container}>
-			<StatusBar />
-			<View style={{
-				flex: 1,
-				alignItems: "flex-start",
-				flexDirection: "column",
-				padding: 20
-			}}>
-				<Pressable onPress={navigate("Home")} style={styles.button}>
-					<Text>Home</Text>
+		<VStack
+			m={2}
+		>
+			{pagesField.map((field, index) => (
+				<Pressable key={index} onPress={navigate(field)}
+					color="black"
+					_hover={{
+						bg: "blue.300"
+					}}
+					p={2}
+					borderRadius={4}
+					m={1}
+				>
+					<Text>{field}</Text>
 				</Pressable>
-				<Pressable onPress={navigate("Detail")} style={styles.button}>
-					<Text>Favoites</Text>
-				</Pressable>
-				<Pressable onPress={navigate("Music")} style={styles.button}>
-					<Text>Music</Text>
-				</Pressable>
-				<Pressable onPress={navigate("Setting")} style={styles.button}>
-					<Text>Setting</Text>
-				</Pressable>
-			</View>
-		</SafeAreaView>
+			))}
+		</VStack>
 	);
 };
-
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		flexDirection: "column",
-		paddingTop: Platform.OS === "android" ? NativeModules.StatusBarManager.HEIGHT : 0,
-	},
-	button: {
-		borderRadius: 5,
-		backgroundColor: "lightblue",
-		padding: 10,
-		margin: 10
-	}
-});

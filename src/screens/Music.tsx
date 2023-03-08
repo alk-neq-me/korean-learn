@@ -1,70 +1,75 @@
-import { NotificationAction } from "expo-notifications";
-import { Box, Button } from "native-base";
-import { useRef } from "react";
-import YoutubeIframe, { YoutubeIframeRef } from "react-native-youtube-iframe";
-import { useNotification } from "../hooks/use-notification";
+import { Box, FlatList, Spinner, VStack } from "native-base";
+import { useCallback, useEffect, useState } from "react";
+import { Modal } from "react-native";
+import { RefreshControl } from "react-native-gesture-handler";
+import { temp_backend_musics } from "../../_doc/temp";
+import Masthead from "../components/masthead";
+import Navbar from "../components/navbar";
+import VideoItem from "../components/VideoItem";
+import ViewVideo from "../components/view-video";
+import useModal from "../hooks/use-modal";
 
 export default function() {
-  const videoRef = useRef<YoutubeIframeRef|null>(null);
-  const { Notifications } = useNotification();
+  const [refreshing, setRefreshing] = useState(true);
+  const { state: modalState, toggleModal, closeModal } = useModal();
   
-  const pushNoti = async () => {
-    Notifications.setNotificationHandler({
-      handleNotification: async () => {
-        return {
-          shouldShowAlert: true,
-          shouldPlaySound: false,
-          shouldSetBadge: false,
-        }
-      }
-    });
-    
-    const actions: NotificationAction[] = [
-      { 
-        buttonTitle: "",
-        identifier: "play",
-        options: {
-          opensAppToForeground: false
-        }
-      },
-      { 
-        buttonTitle: "Pause",
-        identifier: "pause",
-        options: {
-          opensAppToForeground: false
-        }
-      },
-      { 
-        buttonTitle: "Stop",
-        identifier: "stop",
-        options: {
-          opensAppToForeground: false
-        }
-      },
-    ];
-    
-    Notifications.setNotificationCategoryAsync("playback", actions);
-    
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Now playing",
-        body: "Olivia Rodrigo",
-        sound: true,
-        sticky: false,
-        categoryIdentifier: "playback",
-      },
-      trigger: null
-    });
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, []);
+  
+  const load = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false)
+    }, 1000);
   };
   
+  const handleToggleModal = useCallback(() => toggleModal(), []);
+  
   return (
-    <Box p={2} w="full" h="full">
-      <YoutubeIframe
-        ref={videoRef}
-        height={300}
-        videoId="ZmDBbnmKpqQ"
-      />
-      <Button onPress={pushNoti}>Play</Button>
+    <Box w="full" h="full" position="relative">
+      <Modal
+        animated={true}
+        animationType="slide"
+        visible={modalState}
+      >
+        <ViewVideo onClose={closeModal} />
+      </Modal>
+      
+      <Masthead
+        image={require("../../assets/images/online-teaching.png")}
+        title="Music"
+      >
+        <Navbar />
+      </Masthead>
+      
+      {refreshing 
+        ? (   
+        <VStack alignItems="center" justifyContent="center" h="590px" m={2}>
+          <Spinner size="lg" />
+        </VStack>
+        )
+        : (
+        <FlatList 
+          data={temp_backend_musics}
+          renderItem={(info) => (
+            <VideoItem video={info.item} openModal={handleToggleModal} />
+          )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={load} />
+          }
+        />
+        )
+      }
     </Box>
   );
 };
+/*
+    <Box p={2} w="full" h="full">
+    </Box>
+*/

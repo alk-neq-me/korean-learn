@@ -45,21 +45,27 @@ create table choose(
 insert into header(name) values
  ("basic"),
  ("speaking"),
- ("grammar"),
- ("settings")
+ ("grammar")
 ;
 
 insert into library(header_id, section) values
   (1, "ဗျည်း"),     -- basic
   (1, "သရ" ),      -- basic
-  (2, "တွေ့စုံခြင်း")   -- speaking
+
+  (2, "တွေ့စုံခြင်း"),   -- speaking
+
+  (3, "introduction")  -- 3 grammar
 ;
 
 insert into list(library_id, korea, romaji, mean) values
-  (1, "ㄱ (기역)", "g (gi yeok)", "ဂ (ဂီရော့)"),
-  (1, "ㄴ (니은)", "n (ni eun)", "န (နီ အွန်း)"),
+  (1, "ㄱ (기역)", "g (gi yeok)", "ဂ (ဂီရော့)"),     -- 1 ဗျည်း
+  (1, "ㄴ (니은)", "n (ni eun)", "န (နီ အွန်း)"),    -- 1 ဗျည်း
   
-  (2, "ㅏ", "a", "အာ")
+  -- TODO - change library id 
+  (2, "ㅏ", "a", "အာ"),     -- 2 - သရ  
+
+  -- TODO - change library id 
+  (3, "안녕하세요", "annyeonghaseyo", "မဂ်လာပါ")  -- 3 - တွေ့စုံခြင်း
 ;
 
 insert into choose(library_id, list_id, word) values

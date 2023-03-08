@@ -9,5 +9,8 @@ with open("query.sql", mode="r") as fp:
 	cnn.commit()
 
 
-for row in cur.execute("SELECT * FROM library"):
+for row in cur.execute("""
+	SELECT * FROM list 
+	WHERE romaji like '%'
+"""):
 	print(row)

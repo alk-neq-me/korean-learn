@@ -1,5 +1,8 @@
 import { NotificationAction, NotificationContentInput } from "expo-notifications";
+import { Box } from "native-base";
 import { Button, View } from "react-native";
+import Masthead from "../components/masthead";
+import Navbar from "../components/navbar";
 import { useNotification } from "../hooks/use-notification";
 
 export default function() {
@@ -45,11 +48,20 @@ export default function() {
   
 	return (
 		<View>
-			<Button title="setting - notification"
-				onPress={async () => {
-					await pushNoti();
-				}}
-			/>
+      <Masthead
+        image={require("../../assets/images/study-literature.png")}
+        title="Settings"
+      >
+        <Navbar />
+      </Masthead>
+      
+      <Box p={2}>
+  			<Button title="setting - notification"
+  				onPress={async () => {
+  					await pushNoti();
+  				}}
+  			/>
+      </Box>
 		</View>
 	);
 };
