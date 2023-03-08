@@ -3,10 +3,13 @@ import { Box } from "native-base";
 import { Button, View } from "react-native";
 import Masthead from "../components/masthead";
 import Navbar from "../components/navbar";
+import { useStateContext } from "../context";
+import { allClean } from "../context/actions/settings.actions";
 import { useNotification } from "../hooks/use-notification";
 
 export default function() {
   const { Notifications } = useNotification();
+  const {dispatch} = useStateContext();
 
 	Notifications.setNotificationHandler({
 		handleNotification: async () => ({
@@ -55,11 +58,14 @@ export default function() {
         <Navbar />
       </Masthead>
       
-      <Box p={2}>
+      <Box>
   			<Button title="setting - notification"
   				onPress={async () => {
   					await pushNoti();
   				}}
+  			/>
+  			<Button title="clearn"
+  				onPress={() => dispatch(allClean())}
   			/>
       </Box>
 		</View>
