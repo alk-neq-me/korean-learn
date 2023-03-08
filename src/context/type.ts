@@ -47,6 +47,7 @@ export type Settings = {
 		| "teal";
 	fontSize: number;  // 14px to 23px
 	isShowRomaji: boolean;
+	initial_app: boolean;
 };
 
 /// ---------  Application State  ---------

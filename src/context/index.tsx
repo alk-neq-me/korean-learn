@@ -76,7 +76,8 @@ const initialState: State = {
 		isShowRomaji: true,
 		nativeTextColor: "black",
 		schedule: "1h",
-		theme: "light"
+		theme: "light",
+		initial_app: false,
 	}),
 };
 

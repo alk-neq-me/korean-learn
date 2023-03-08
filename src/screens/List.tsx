@@ -8,7 +8,7 @@ import FullErrorPage from "../components/full-error";
 import Masthead from "../components/masthead";
 import Navbar from "../components/navbar";
 import { useStateContext } from "../context";
-import { getListByLibraryId, toggleFavorite } from "../context/actions/list.actions";
+import { getFavoriteList, getListByLibraryId, toggleFavorite } from "../context/actions/list.actions";
 
 type Props = {
   route?: RouteProp<RootScreenParamList, "List">;
@@ -39,7 +39,8 @@ export default function List(props: Props) {
 	
 	const onRefresh = useCallback(() => {
 		const id_ = rows[0].library_id;
-		if (id_) dispatch(getListByLibraryId(id_));
+		if (id_ && !isFavorite) dispatch(getListByLibraryId(id_));
+		if (isFavorite) dispatch(getFavoriteList());
 	}, [rows[0]?.library_id]);
 	
 	if (error) return (
