@@ -1,5 +1,5 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
-// import SlideBar from "./components/slide-bar";
+import SlideBar from "./components/slide-bar";
 import Home from "./screens/Home";
 import Music from "./screens/Music";
 import Grammar from './screens/Grammar';
@@ -9,7 +9,7 @@ import List from "./screens/List";
 
 export type RootScreenParamList = {
 	Home: undefined;
-	List: { isFavorite: boolean };
+	List: { screenMode: "list"|"favorite"|"search" };
 	
 	Music: undefined;
 	Grammar: undefined;
@@ -24,15 +24,15 @@ export default function App() {
 	return (
 		<Drawer.Navigator
 			initialRouteName="Home"
-			// drawerContent={props => <SlideBar {...props} />}
+			drawerContent={props => <SlideBar {...props} />}
 			screenOptions={{
 				headerShown: false,
 				drawerType: "back",
-				overlayColor: "rgba(0,0,0,.5)"
+				overlayColor: "rgba(0,0,0,.5)",
 			}}
 		>
 			<Drawer.Screen name="Home" component={Home} />
-			<Drawer.Screen name="List" component={List} initialParams={{ isFavorite: false }} />
+			<Drawer.Screen name="List" component={List} initialParams={{ screenMode: "list" }} />
 			<Drawer.Screen name="Music" component={Music} />
 			<Drawer.Screen name="Grammar" component={Grammar} />
 			<Drawer.Screen name="Setting" component={Setting} />

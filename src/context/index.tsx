@@ -1,40 +1,51 @@
 import { createContext, useContext, useReducer } from "react";
-import { Library, LibraryState, List, ListState, Music, MusicState, SettingsState } from "./type";
+import { LibraryState, ListState, MusicListState, MusicState, SettingsState, UnpackType } from "./type";
 
 export type State = {
 	library: LibraryState;
 	list: ListState;
+	musicList: MusicListState;
 	selectedVideo: MusicState;
 	
 	settings: SettingsState;  // TODO new feature for theme & settings
 };
 
-export enum ActionTypeEnum {
+export type ActionTypeEnum = 
 	/// Library
-	REQUEST_LIBRARY = "REQUEST",
-	SUCCESS_LIBRARY = "SUCCESS_LIBRARY",
-	FETCH_ERROR_LIBRARY = "FETCH_ERROR_LIBRARY",
+	| "REQUEST_LIBRARY"
+	| "SUCCESS_LIBRARY"
+	| "FETCH_ERROR_LIBRARY"
 	
 	/// List
-	REQUEST_LIST = "REQUEST_LIST",
-	SUCCESS_LIST = "FETCH_LIST",
-	FETCH_ERROR_LIST = "FETCH_ERROR_LIST",
-	TOGGLE_FAV_LIST = "TOGGLE_FAV_LIST",
+	| "REQUEST_LIST"
+	| "SUCCESS_LIST"
+	| "FETCH_ERROR_LIST"
+	| "TOGGLE_FAV_LIST"
+	
+	/// Music List
+	| "REQUEST_MUSIC_LIST"
+	| "SUCCESS_MUSIC_LIST"
+	| "FETCH_ERROR_MUSIC_LIST"
 	
 	/// Music
-	REQUEST_SELECTED_MUSIC = "REQUEST_SELECTED_MUSIC",
-	SUCCESS_SELECTED_MUSIC = "SUCCESS_SELECTED_MUSIC",
-	FETCH_ERROR_SELECTED_MUSIC = "FETCH_ERROR_SELECTED_MUSIC",
-	TOGGLE_SELECTED_MUSIC = "TOGGLE_SELECTED_MUSIC",
-	READY_SELECTED_MUSIC = "READY_SELECTED_MUSIC",
-};
+	| "REQUEST_SELECTED_MUSIC"
+	| "SUCCESS_SELECTED_MUSIC"
+	| "FETCH_ERROR_SELECTED_MUSIC"
+	| "TOGGLE_PLAY_MUSIC"
+	| "PLAY_SELECTED_MUSIC"
+	| "PAUSE_SELECTED_MUSIC"
+	| "READY_SELECTED_MUSIC"
+	| "LOAD_ERROR_SELECTED_MUSIC"
+;
 
 type Payload = 
 	| string  	// error string
-	| Library[] // success Library
-	| List[] 		// success List
+	| UnpackType<LibraryState, "rows"> // success Library
+	| UnpackType<ListState, "rows"> 		// success List
+	| UnpackType<MusicListState, "rows"> 		// success Music List
 	| number 		// id_
-	| Music  		// create Music
+	| UnpackType<MusicState, "music">  		// create Music
+	| string		// error fetch for selected music
 
 type Action = 
 	| { type: ActionTypeEnum; }
@@ -42,6 +53,8 @@ type Action =
 
 export type Dispatch = (action: Action) => void;
 	
+export type AnyFunc = (...arg: any[]) => any;
+
 type DispatchAsync = <T extends AnyFunc>(fn: T) => void;
 
 export type ActionAsync = (dispatch: Dispatch, state?: State) => void;
@@ -56,8 +69,6 @@ type Props = {
 	children: React.ReactNode;
 };
 
-type AnyFunc = (...arg: any[]) => any;
-
 function getBaseState<T, K extends keyof T>(key: K, value: T[K]): T {
 	return {
 		loading: false,
@@ -69,7 +80,13 @@ function getBaseState<T, K extends keyof T>(key: K, value: T[K]): T {
 const initialState: State = {
 	library: getBaseState<LibraryState, "rows">("rows", []),
 	list: getBaseState<ListState, "rows">("rows", []),
-	selectedVideo: getBaseState<MusicState, "music">("music", undefined),
+	musicList: getBaseState<MusicListState, "rows">("rows", []),
+	
+	selectedVideo: getBaseState<MusicState, "music">("music", {
+		playing: false,
+		videoId: "",
+		title: "",
+	}),
 	
 	settings: getBaseState<SettingsState, "setting">("setting", {
 		fontSize: 12,
@@ -84,39 +101,39 @@ const initialState: State = {
 const reducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		/// Library
-		case ActionTypeEnum.REQUEST_LIBRARY:
+		case "REQUEST_LIBRARY":
 			return {
 				...state,
 				library: { ...state.library, loading: true, error: undefined }
 			};
-		case ActionTypeEnum.SUCCESS_LIBRARY:
+		case "SUCCESS_LIBRARY":
 			return {
 				...state,
-				library: { ...state.library, loading: false, rows: ("payload" in action) ? action.payload as Library[] : state.library.rows }
+				library: { ...state.library, loading: false, rows: ("payload" in action) ? action.payload as UnpackType<LibraryState, "rows"> : state.library.rows }
 			};
-		case ActionTypeEnum.FETCH_ERROR_LIBRARY:
+		case "FETCH_ERROR_LIBRARY":
 			return {
 				...state,
 				library: { ...state.library, loading: false, error: ("payload" in action) ? action.payload as string : state.library.error }
 			};
 	
 		/// List
-		case ActionTypeEnum.REQUEST_LIST:
+		case "REQUEST_LIST":
 			return {
 				...state,
 				list: { ...state.list, loading: true, error: undefined }
 			};
-		case ActionTypeEnum.SUCCESS_LIST:
+		case "SUCCESS_LIST":
 			return {
 				...state,
-				list: { ...state.list, loading: false, rows: ("payload" in action) ? action.payload as List[] : state.list.rows }
+				list: { ...state.list, loading: false, rows: ("payload" in action) ? action.payload as UnpackType<ListState, "rows"> : state.list.rows }
 			};
-		case ActionTypeEnum.FETCH_ERROR_LIST:
+		case "FETCH_ERROR_LIST":
 			return {
 				...state,
 				list: { ...state.list, loading: false, error: ("payload" in action) ? action.payload as string : state.list.error }
 			};
-		case ActionTypeEnum.TOGGLE_FAV_LIST:
+		case "TOGGLE_FAV_LIST":
 			return { 
 				...state,
 				list: {
@@ -128,8 +145,25 @@ const reducer = (state: State, action: Action): State => {
 				}
 			};
 	
+		/// Music List
+		case "REQUEST_MUSIC_LIST":
+			return {
+				...state,
+				musicList: { ...state.musicList, loading: true, error: undefined }
+			};
+		case "SUCCESS_MUSIC_LIST":
+			return {
+				...state,
+				musicList: { ...state.musicList, loading: false, rows: ("payload" in action) ? action.payload as UnpackType<MusicListState, "rows"> : state.musicList.rows }
+			};
+		case "FETCH_ERROR_MUSIC_LIST":
+			return {
+				...state,
+				musicList: { ...state.musicList, loading: false, error: ("payload" in action) ? action.payload as string : state.library.error }
+			};
+	
 		/// Music
-		case ActionTypeEnum.REQUEST_SELECTED_MUSIC:
+		case "REQUEST_SELECTED_MUSIC":
 			return {
 				...state,
 				selectedVideo: {
@@ -138,17 +172,17 @@ const reducer = (state: State, action: Action): State => {
 					error: undefined
 				}
 			};
-		case ActionTypeEnum.SUCCESS_SELECTED_MUSIC:
+		case "SUCCESS_SELECTED_MUSIC":
 			return {
 				...state,
 				selectedVideo: {
 					...state.selectedVideo,
-					loading: false,
+					loading: true,
 					error: undefined,
-					music: ("payload" in action) ? action.payload as Music : state.selectedVideo.music
+					music: ("payload" in action) ? action.payload as UnpackType<MusicState, "music"> : state.selectedVideo.music
 				}
 			};
-		case ActionTypeEnum.FETCH_ERROR_SELECTED_MUSIC:
+		case "FETCH_ERROR_SELECTED_MUSIC":
 			return {
 				...state,
 				selectedVideo: {
@@ -157,24 +191,52 @@ const reducer = (state: State, action: Action): State => {
 					error: ("payload" in action) ? action.payload as string : state.selectedVideo.error
 				}
 			};
-		case ActionTypeEnum.TOGGLE_SELECTED_MUSIC:
+		case "TOGGLE_PLAY_MUSIC":
 			return {
 				...state,
 				selectedVideo: {
 					...state.selectedVideo,
 					loading: false,
 					error: undefined,
-					music: { ...state.selectedVideo.music as Music, playing: !state.selectedVideo.music?.playing }
+					music: { ...state.selectedVideo.music as UnpackType<MusicState, "music">, playing: !state.selectedVideo.music?.playing }
 				}
 			};
-		case ActionTypeEnum.READY_SELECTED_MUSIC:
+		case "PLAY_SELECTED_MUSIC":
 			return {
 				...state,
 				selectedVideo: {
 					...state.selectedVideo,
 					loading: false,
 					error: undefined,
-					music: { ...state.selectedVideo.music as Music, video_loading: false }
+					music: { ...state.selectedVideo.music as UnpackType<MusicState, "music">, playing: true }
+				}
+			};
+		case "PAUSE_SELECTED_MUSIC":
+			return {
+				...state,
+				selectedVideo: {
+					...state.selectedVideo,
+					loading: false,
+					error: undefined,
+					music: { ...state.selectedVideo.music as UnpackType<MusicState, "music">, playing: false }
+				}
+			};
+		case "READY_SELECTED_MUSIC":
+			return {
+				...state,
+				selectedVideo: {
+					...state.selectedVideo,
+					loading: false,
+					error: undefined,
+				}
+			};
+		case "LOAD_ERROR_SELECTED_MUSIC":
+			return {
+				...state,
+				selectedVideo: {
+					...state.selectedVideo,
+					loading: false,
+					error: ("payload" in action) ? action.payload as string : undefined,
 				}
 			};
 	

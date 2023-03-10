@@ -1,15 +1,19 @@
 import { NotificationAction, NotificationContentInput } from "expo-notifications";
-import { Box } from "native-base";
-import { Button, View } from "react-native";
+import { Box, Button, Switch, useColorMode, useColorModeValue } from "native-base";
+import { useRef } from "react";
+import { Animated } from "react-native";
 import Masthead from "../components/masthead";
 import Navbar from "../components/navbar";
 import { useStateContext } from "../context";
 import { allClean } from "../context/actions/settings.actions";
-import { useNotification } from "../hooks/use-notification";
+import useNotification from "../hooks/use-notification";
 
 export default function() {
   const { Notifications } = useNotification();
   const {dispatch} = useStateContext();
+  const offset = useRef(new Animated.Value(0)).current;
+  
+  const { colorMode, toggleColorMode } = useColorMode();
 
 	Notifications.setNotificationHandler({
 		handleNotification: async () => ({
@@ -50,24 +54,19 @@ export default function() {
   };
   
 	return (
-		<View>
+		<Box bg={useColorModeValue("white", "gray.700")} h="full">
       <Masthead
+        animatedValue={offset}
         image={require("../../assets/images/study-literature.png")}
         title="Settings"
       >
         <Navbar />
       </Masthead>
       
-      <Box>
-  			<Button title="setting - notification"
-  				onPress={async () => {
-  					await pushNoti();
-  				}}
-  			/>
-  			<Button title="clearn"
-  				onPress={() => dispatch(allClean())}
-  			/>
+      <Box pt={230} px={5}>
+        <Button onPress={() => dispatch(allClean())}>All Clean</Button>
+        <Switch onToggle={toggleColorMode} isChecked={colorMode === "light"} />
       </Box>
-		</View>
+		</Box>
 	);
 };

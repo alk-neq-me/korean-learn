@@ -4,19 +4,12 @@ import {Platform} from 'react-native';
 import * as Device from 'expo-device';
 import { useEffect, useRef, useState } from 'react';
 import { Notification } from 'expo-notifications';
-import { useStateContext } from '../context';
-import { Music } from '../context/type';
 
-export function useNotification() {
+export default function useNotification() {
 	const notificationListener = useRef<Subscription>();
 	const responseListener = useRef<Subscription>();
 	const [notification, setNotification] = useState<Notification>();
 	
-	const {
-		state: { selectedVideo },
-		dispatch
-	} = useStateContext();
-
 	async function registerForPushNotificationsAsync() {
 	  let token;
 
@@ -60,10 +53,7 @@ export function useNotification() {
 		notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
 			setNotification(notification);
 		});
-		responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-			if (response.actionIdentifier === "playPauseVideo") {
-				// dispatch(fetchMusicChange({ ...selectedVideo as Music, loading: false, error: undefined, playing: false }));
-			}
+		responseListener.current = Notifications.addNotificationResponseReceivedListener(_response => {
 		});
 		return () => {
 			if (notificationListener.current) Notifications.removeNotificationSubscription(notificationListener.current);

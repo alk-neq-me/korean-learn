@@ -1,5 +1,5 @@
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { View, Text, Button } from "react-native";
+import { Button, VStack } from "native-base";
 import { GrammarScreenParamList } from ".";
 
 type Props = {
@@ -14,9 +14,8 @@ export default function(props: Props) {
   };
   
   return (
-    <View>
-      <Text>Intro</Text>
-      <Button title="part2" onPress={navigate("Part2")} />
-    </View>
+    <VStack p={2}>
+      <Button onPress={navigate("Part2")}>Part 2</Button>
+    </VStack>
   );
 };

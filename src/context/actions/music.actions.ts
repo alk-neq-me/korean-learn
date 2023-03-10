@@ -1,23 +1,63 @@
-import { ActionAsync, ActionTypeEnum } from "..";
-import { Music } from "../type";
+import { ActionAsync } from "..";
+import { MusicState, UnpackType } from "../type";
 
-export const initMusic = (music: Music): ActionAsync => async (dispatch) => {
-	dispatch({ type: ActionTypeEnum.REQUEST_SELECTED_MUSIC });
+export const initMusic = (music: UnpackType<MusicState, "music">): ActionAsync => async (dispatch) => {
+	dispatch({ type: "REQUEST_SELECTED_MUSIC" });
 	try {
-		dispatch({ type: ActionTypeEnum.SUCCESS_SELECTED_MUSIC, payload: music });
+		dispatch({ type: "SUCCESS_SELECTED_MUSIC", payload: music });
 	} catch (err) {
 		let errMassage = "unknoen error";
 		if (err instanceof Error) errMassage = err.message;
-		dispatch({ type: ActionTypeEnum.FETCH_ERROR_SELECTED_MUSIC, payload: errMassage });
+		dispatch({ type: "FETCH_ERROR_SELECTED_MUSIC", payload: errMassage });
 	};
 };
 
 export const readyMusic = (): ActionAsync => async (dispatch) => {
 	try {
-		dispatch({ type: ActionTypeEnum.READY_SELECTED_MUSIC });
+		dispatch({ type: "READY_SELECTED_MUSIC" });
 	} catch (err) {
 		let errMassage = "unknoen error";
 		if (err instanceof Error) errMassage = err.message;
-		dispatch({ type: ActionTypeEnum.FETCH_ERROR_SELECTED_MUSIC, payload: errMassage });
+		dispatch({ type: "FETCH_ERROR_SELECTED_MUSIC", payload: errMassage });
+	};
+};
+
+export const playMusic = (): ActionAsync => async (dispatch) => {
+	try {
+		dispatch({ type: "PLAY_SELECTED_MUSIC" });
+	} catch (err) {
+		let errMassage = "unknoen error";
+		if (err instanceof Error) errMassage = err.message;
+		dispatch({ type: "FETCH_ERROR_SELECTED_MUSIC", payload: errMassage });
+	};
+};
+
+export const pauseMusic = (): ActionAsync => async (dispatch) => {
+	try {
+		dispatch({ type: "PAUSE_SELECTED_MUSIC" });
+	} catch (err) {
+		let errMassage = "unknoen error";
+		if (err instanceof Error) errMassage = err.message;
+		dispatch({ type: "FETCH_ERROR_SELECTED_MUSIC", payload: errMassage });
+	};
+};
+
+export const togglePlayMusic = (): ActionAsync => async (dispatch) => {
+	try {
+		dispatch({ type: "TOGGLE_PLAY_MUSIC" });
+	} catch (err) {
+		let errMassage = "unknoen error";
+		if (err instanceof Error) errMassage = err.message;
+		dispatch({ type: "FETCH_ERROR_SELECTED_MUSIC", payload: errMassage });
+	};
+};
+
+export const errorMusic = (error: string): ActionAsync => async (dispatch) => {
+	try {
+		dispatch({ type: "LOAD_ERROR_SELECTED_MUSIC", payload: error });
+	} catch (err) {
+		let errMassage = "unknoen error";
+		if (err instanceof Error) errMassage = err.message;
+		dispatch({ type: "FETCH_ERROR_SELECTED_MUSIC", payload: errMassage });
 	};
 };

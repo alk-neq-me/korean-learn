@@ -1,11 +1,11 @@
-import { ActionTypeEnum, Dispatch } from "../context";
-import { List } from "../context/type";
+import { Dispatch } from "../context";
+import { ListState, UnpackType } from "../context/type";
 import createQueryFilter from "../utilits/create-query-filter";
 import { serviceQuery } from "./service-query";
 
 export default class ListService {
 	static async getListByLibraryId(dispatch: Dispatch, id_: number): Promise<void> {
-		const [query, queryArgs] = createQueryFilter<Partial<List>>(
+		const [query, queryArgs] = createQueryFilter<Partial<UnpackType<ListState, "rows">[0]>>(
 			`
 				SELECT list.*, library.section as library_name FROM list
 				JOIN library
@@ -14,7 +14,7 @@ export default class ListService {
 		);
 	
 		serviceQuery(query, queryArgs, (result) => {
-			dispatch({ type: ActionTypeEnum.SUCCESS_LIST, payload: result.rows._array });
+			dispatch({ type: "SUCCESS_LIST", payload: result.rows._array });
 		});
 	};
 	
@@ -27,7 +27,7 @@ export default class ListService {
 			`,
 			[id_],
 			(_result) => {
-				dispatch({ type: ActionTypeEnum.TOGGLE_FAV_LIST, payload: id_ });
+				dispatch({ type: "TOGGLE_FAV_LIST", payload: id_ });
 			}
 		);
 	};
@@ -41,7 +41,25 @@ export default class ListService {
 		`;
 		
 		serviceQuery(query, [], (result) => {
-			dispatch({ type: ActionTypeEnum.SUCCESS_LIST, payload: result.rows._array });
+			dispatch({ type: "SUCCESS_LIST", payload: result.rows._array });
+		});
+	};
+	
+	static async searchList(dispatch: Dispatch, searchWord: string): Promise<void> {
+		const [query, queryArgs] = createQueryFilter<Partial<UnpackType<ListState, "rows">[0]>>(
+			`
+				SELECT list.*, library.section as library_name FROM list
+				JOIN library
+				ON library.id = list.library_id
+			`, {
+				romaji: searchWord,
+				korea: searchWord,
+				mean: searchWord
+			}, "search"
+		);
+	
+		serviceQuery(query, queryArgs, (result) => {
+			dispatch({ type: "SUCCESS_LIST", payload: result.rows._array });
 		});
 	};
 };

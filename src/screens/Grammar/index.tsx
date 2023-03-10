@@ -1,4 +1,4 @@
-import { createStackNavigator } from "@react-navigation/stack";
+import { CardStyleInterpolators, createStackNavigator } from "@react-navigation/stack";
 import { Text } from 'react-native';
 import Intro from "./Intro";
 
@@ -16,7 +16,13 @@ export default function() {
     <Stack.Navigator
 			initialRouteName="Intro"
 			screenOptions={{
-        headerShown: true
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: "#fdba74",
+        },
+        headerTintColor: '#fff',
+        gestureEnabled: true,
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
     >
       <Stack.Screen name="Intro" component={Intro} />

@@ -1,30 +1,38 @@
-import { Box, FlatList, Spinner, VStack } from "native-base";
-import { useCallback } from "react";
-import { Modal } from "react-native";
-import { RefreshControl } from "react-native-gesture-handler";
-import { temp_backend_musics } from "../../_doc/temp";
+import { FlatList } from "native-base";
+import { useCallback, useEffect, useRef } from "react";
+import { Animated, Modal, RefreshControl } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import FullErrorPage from "../components/full-error";
 import FullLoading from "../components/full-loading";
 import Masthead from "../components/masthead";
 import Navbar from "../components/navbar";
-import VideoItem from "../components/VideoItem";
+import VideoItem from "../components/video-item";
 import ViewVideo from "../components/view-video";
 import { useStateContext } from "../context";
+import { getMusicList } from "../context/actions/music-list.actions";
 import useModal from "../hooks/use-modal";
 
 export default function() {
   const {
     state: {
-      selectedVideo
+      musicList
     },
+    dispatch
   } = useStateContext();
   const { state: modalState, toggleModal, closeModal } = useModal();
+  const offset = useRef(new Animated.Value(0)).current;
   
-  const loading = selectedVideo.loading;
-  const error = selectedVideo.error;
+  const rows = musicList.rows;
+  const loading = musicList.loading;
+  const error = musicList.error;
   
-  const onRefresh = () => {
-  };
+  useEffect(() => {
+    dispatch(getMusicList());
+  }, []);
+  
+  const onRefresh = useCallback(() => {
+    dispatch(getMusicList());
+  }, []);
   
   const handleToggleModal = useCallback(() => toggleModal(), []);
   
@@ -41,16 +49,18 @@ export default function() {
   }
   
   return (
-    <Box w="full" h="full" position="relative">
+		<SafeAreaView style={{flex:1}}>
       <Modal
         animated={true}
         animationType="slide"
         visible={modalState}
+        onRequestClose={closeModal}
       >
         <ViewVideo onClose={closeModal} />
       </Modal>
       
       <Masthead
+        animatedValue={offset}
         image={require("../../assets/images/online-teaching.png")}
         title="Music"
       >
@@ -58,14 +68,22 @@ export default function() {
       </Masthead>
       
       <FlatList 
-        data={temp_backend_musics}
+        data={rows}
+        contentContainerStyle={{
+          alignItems: "flex-start",
+          paddingTop: 200,
+        }}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: {y: offset} } }],
+          { useNativeDriver: false }
+        )}
         renderItem={(info) => (
           <VideoItem video={info.item} openModal={handleToggleModal} />
         )}
-        refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={loading} progressViewOffset={200} onRefresh={onRefresh} />}
       />
-    </Box>
+    </SafeAreaView>
   );
 };

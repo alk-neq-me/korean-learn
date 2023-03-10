@@ -1,15 +1,14 @@
-import { SafeAreaView } from 'react-native';
+import { Animated, SafeAreaView } from 'react-native';
 import { RootScreenParamList } from '..';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useStateContext } from '../context';
-import { Box, StatusBar, Text, Button, FlatList, Pressable, ScrollView } from 'native-base';
+import { Box, Text, FlatList, Pressable, ScrollView, useColorModeValue } from 'native-base';
 import Masthead from '../components/masthead';
 import Navbar from '../components/navbar';
 import FullLoading from '../components/full-loading';
 import FullErrorPage from '../components/full-error';
 import { getLibraries } from '../context/actions/library.actions';
-import { allClean } from '../context/actions/settings.actions';
 import { getListByLibraryId } from '../context/actions/list.actions';
 
 type Props = {
@@ -25,6 +24,7 @@ const Home = (props: Props) => {
     },
     dispatch
   } = useStateContext();
+  const offset = useRef(new Animated.Value(0)).current;
   
   const rows = library.rows;
   const loading = library.loading;
@@ -38,7 +38,7 @@ const Home = (props: Props) => {
   
   const navigate = useCallback((id_: number) => {
     dispatch(getListByLibraryId(id_));
-    navigation.navigate("List");
+    navigation.navigate("List", { screenMode: "list" });
   }, []);
   
   if (loading) {
@@ -54,43 +54,63 @@ const Home = (props: Props) => {
   }
   
   return (
-    <SafeAreaView>
-      <StatusBar />
+		<SafeAreaView>
       <Masthead
         image={require("../../assets/images/online-exam.png")}
         title="Home"
+        animatedValue={offset}
       >
         <Navbar />
       </Masthead>
-      <ScrollView h="xl">
-        {[1, 2, 3].map((header, index) => (
-          <FlatList
-            key={index}
-            py={4}
-            borderBottomWidth={2} borderBottomColor="gray.300"
-            horizontal
-            data={rows.filter(row => row.header_id === header)}
-            renderItem={(info) => (
-              <Pressable onPress={() => navigate(info.item.id)}>
-                <Box
-                  bg="yellow.200"
-                  px="76px"
-                  py="50px"
-                  m={2}
-                  borderRadius={20}
-                  shadow={2}
-                >
-                  <Text>{ info.item.section }</Text>
-                </Box>
-              </Pressable>
-            )}
-          />
-        ))}
-        <Box p="100px" bg="orange.300" borderRadius={20} m={2}>Test</Box>
-        <Box p="100px" bg="orange.300" borderRadius={20} m={2}>Test</Box>
-        <Box p="100px" bg="orange.300" borderRadius={20} m={2}>Test</Box>
-        <Box p="100px" bg="orange.300" borderRadius={20} m={2}>Test</Box>
-        <Button onPress={() => dispatch(allClean())}>Clean</Button>
+      <ScrollView
+        display="flex"
+        bg="orange.300"
+        contentContainerStyle={{
+          alignItems: "flex-start",
+          paddingTop: 230,
+        }}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: {y: offset} } }],
+          { useNativeDriver: false }
+        )}
+      >
+        <Box
+          bg={useColorModeValue("white", "gray.700")}
+          borderTopLeftRadius={30}
+          borderTopRightRadius={30}
+        >
+          {[1, 2, 3].map((header, index) => (
+            <FlatList
+              key={index}
+              py={4}
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              data={rows.filter(row => row.header_id === header)}
+              renderItem={(info) => (
+                <Pressable onPress={() => navigate(info.item.id)}>
+                  <Box
+                    bg="yellow.200"
+                    px="76px"
+                    py="50px"
+                    m={2}
+                    borderRadius={20}
+                    shadow={2}
+                  >
+                    <Text>{ info.item.section }</Text>
+                  </Box>
+                </Pressable>
+              )}
+            />
+          ))}
+          <Box p="100px" bg="orange.300" borderRadius={20} m={2}>Test</Box>
+          <Box p="100px" bg="orange.300" borderRadius={20} m={2}>Test</Box>
+          <Box p="100px" bg="orange.300" borderRadius={20} m={2}>Test</Box>
+          <Box p="100px" bg="orange.300" borderRadius={20} m={2}>Test</Box>
+          <Box p="100px" bg="orange.300" borderRadius={20} m={2}>Test</Box>
+          <Box p="100px" bg="orange.300" borderRadius={20} m={2}>Test</Box>
+        </Box>
       </ScrollView>
     </SafeAreaView>
   )

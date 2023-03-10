@@ -1,10 +1,10 @@
-export type Library = {
+type Library = {
 	id: number;
 	section: string;
 	header_id: number;
 };
 
-export type List = {
+type List = {
   id: number;
   korea: string;
   romaji: string;
@@ -15,17 +15,16 @@ export type List = {
 	library_name?: string;
 };
 
-export type Music = {
+type Music = {
 	id_?: string;
 	title: string;
 	description?: string;
 	videoId: string;
 	thumbnails?: string;	
 	playing: boolean;
-	video_loading: boolean;
 };
 
-export type Settings = {
+type Settings = {
 	theme: 
 		| "light"
 		| "dark";
@@ -57,10 +56,14 @@ export type BaseType = {
 	error?: string;
 };
 
+export type UnpackType<T, K extends keyof T> = T[K] extends (infer U) ? U : never;
+
 export type ListState = BaseType & { rows: Array<List> };
 
 export type LibraryState = BaseType & { rows: Array<Library> };
 
-export type MusicState = BaseType & { music?: Music };
+export type MusicListState = BaseType & { rows: Array<Music> };
+
+export type MusicState = BaseType & { music: Music };
 
 export type SettingsState = BaseType & { setting: Settings };
