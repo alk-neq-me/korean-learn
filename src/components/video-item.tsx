@@ -29,16 +29,22 @@ export default function VideoItem(props: Props) {
 			justifyContent="flex-start"
 			onPress={handleClickVideo}
 		>
-			<Image
-				borderRadius="7"
-				source={{
-					uri: video.thumbnails
-				}}
-				alt={video.title}
-				size="xl"
+			<VStack
 				width={150}
 				height={24}
-			/>
+				justifyContent="center"
+			>
+				<Image
+					borderRadius="7"
+					source={{
+						uri: video.thumbnails
+					}}
+					alt={video.title.slice(0,10) + "..."}
+					size="xl"
+					width="full"
+					height="full"
+				/>
+			</VStack>
 			<VStack alignItems="flex-start" m={2} maxW="200px">
 				<Text fontSize="md">
 					{video.title}

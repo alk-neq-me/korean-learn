@@ -1,12 +1,12 @@
 import { ActionAsync } from "..";
 import LibraryService from "../../services/library.service";
 import { QueryService } from "../../services/type";
-import { Library } from "../type";
+import { LibraryState, UnpackType } from "../type";
 
-export const getLibraries = (query: QueryService<Library>): ActionAsync => async (dispatch) => {
+export const getLibraries = (query: QueryService<UnpackType<LibraryState, "rows">[0]>): ActionAsync => async (dispatch) => {
 	dispatch({ type: "REQUEST_LIBRARY" });
 	try {
-		LibraryService.getLibrariesService(dispatch, query);
+		await LibraryService.getLibrariesService(dispatch, query);
 	} catch (err) {
 		let errMassage = "unknoen error";
 		if (err instanceof Error) errMassage = err.message;

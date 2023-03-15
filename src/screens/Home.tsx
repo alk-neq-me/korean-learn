@@ -1,4 +1,4 @@
-import { Animated, SafeAreaView } from 'react-native';
+import { Animated, SafeAreaView, useWindowDimensions } from 'react-native';
 import { RootScreenParamList } from '..';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useCallback, useEffect, useRef } from 'react';
@@ -10,6 +10,7 @@ import FullLoading from '../components/full-loading';
 import FullErrorPage from '../components/full-error';
 import { getLibraries } from '../context/actions/library.actions';
 import { getListByLibraryId } from '../context/actions/list.actions';
+import { initialApp } from '../context/actions/settings.actions';
 
 type Props = {
   navigation: DrawerNavigationProp<RootScreenParamList, "Home">;
@@ -20,41 +21,55 @@ const Home = (props: Props) => {
   const { navigation } = props;
   const {
     state: {
-      library
+      library,
+      settings
     },
     dispatch
   } = useStateContext();
   const offset = useRef(new Animated.Value(0)).current;
-  
+
+  const { width } = useWindowDimensions();
+
   const rows = library.rows;
-  const loading = library.loading;
-  const error = library.error;
-  
+  const loading = library.loading || settings.loading;
+  const error = library.error || settings.error;
+
+  const isInitialApp = settings.setting.initial_app;
+
   useEffect(() => {
-    dispatch(getLibraries({
-      filter: {}
-    }));
-  }, []);
-  
+    if (!isInitialApp) {
+      dispatch(getLibraries({
+        filter: {}
+      }));
+    } else {
+      console.log("need to false", isInitialApp)
+      dispatch(initialApp());
+      // console.log("to false initial app");
+      dispatch(getLibraries({
+        filter: {}
+      }));
+    }
+  }, [isInitialApp]);
+
   const navigate = useCallback((id_: number) => {
     dispatch(getListByLibraryId(id_));
     navigation.navigate("List", { screenMode: "list" });
   }, []);
-  
+
   if (loading) {
     return (
       <FullLoading />
     );
   };
-  
+
   if (error) {
     return (
       <FullErrorPage error="404" />
-    )
-  }
-  
+    );
+  };
+
   return (
-		<SafeAreaView>
+    <SafeAreaView>
       <Masthead
         image={require("../../assets/images/online-exam.png")}
         title="Home"
@@ -72,7 +87,7 @@ const Home = (props: Props) => {
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
         onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: {y: offset} } }],
+          [{ nativeEvent: { contentOffset: { y: offset } } }],
           { useNativeDriver: false }
         )}
       >
@@ -80,6 +95,7 @@ const Home = (props: Props) => {
           bg={useColorModeValue("white", "gray.700")}
           borderTopLeftRadius={30}
           borderTopRightRadius={30}
+          w={width}
         >
           {[1, 2, 3].map((header, index) => (
             <FlatList
@@ -98,7 +114,7 @@ const Home = (props: Props) => {
                     borderRadius={20}
                     shadow={2}
                   >
-                    <Text>{ info.item.section }</Text>
+                    <Text>{info.item.section}</Text>
                   </Box>
                 </Pressable>
               )}

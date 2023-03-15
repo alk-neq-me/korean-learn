@@ -4,19 +4,19 @@ import { StateContextProvider } from "../context";
 import theme from "../theme";
 
 type Props = {
-	children: React.ReactNode;
+  children: React.ReactNode;
 };
 
 export default function AppContainer(props: Props) {
-	const { children } = props;
-	
-	return (
-		<NavigationContainer>
-			<StateContextProvider>
-				<NativeBaseProvider theme={theme}>
-					{children}
-				</NativeBaseProvider>
-			</StateContextProvider>
-		</NavigationContainer>
-	);
+  const { children } = props;
+
+  return (
+    <NavigationContainer>
+      <StateContextProvider>
+        <NativeBaseProvider theme={theme}>
+          {children}
+        </NativeBaseProvider>
+      </StateContextProvider>
+    </NavigationContainer>
+  );
 };

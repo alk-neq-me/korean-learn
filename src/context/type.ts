@@ -35,7 +35,7 @@ type Settings = {
 		| "1h"
 		| "3h"
 		| "5h";
-	nativeTextColor: 
+	native_text_color: 
 		| "black"
 		| "blue"
 		| "green"
@@ -44,8 +44,8 @@ type Settings = {
 		| "purple"
 		| "gray"
 		| "teal";
-	fontSize: number;  // 14px to 23px
-	isShowRomaji: boolean;
+	font_size: number;  // 14px to 23px
+	is_show_romaji: boolean;
 	initial_app: boolean;
 };
 

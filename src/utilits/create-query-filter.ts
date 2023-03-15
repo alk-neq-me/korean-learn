@@ -1,4 +1,9 @@
-export default function createQueryFilter<T extends Object>(query_: string, filter: T, mode: "filter" | "search" = "filter"): [string, Array<T[Extract<keyof T, string>]>] {
+export default function createQueryFilter<T extends Object>(
+	query_: string,
+	filter: T,
+	mode: "filter" | "search" = "filter",
+	extra?: string | undefined
+): [string, Array<T[Extract<keyof T, string>]>] {
 	if (Object.keys(filter).length === 0) return [query_, []];
 	
 	let query = query_ + " WHERE";
@@ -17,6 +22,8 @@ export default function createQueryFilter<T extends Object>(query_: string, filt
 			values.push(filter[typedKey]);
 		};
 	};
+	
+	if (extra) query += ` ${extra}`;
 	
 	return [query, values];
 };

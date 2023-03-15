@@ -1,10 +1,10 @@
 PRAGMA foreign_keys = ON;
 
 -- DROP
-drop table if exists choose;
 drop table if exists list;
 drop table if exists library;
 drop table if exists header;
+drop table if exists settings;
 
 -- CREATE
 create table header(
@@ -30,16 +30,15 @@ create table list(
   foreign key(library_id) references library(id)
 );
 
-create table choose(
-  id integer primary key,
-  library_id integer,
-  list_id integer,
-  word text not null,
-  foreign key(library_id) references library(id),
-  foreign key(list_id) references list(id)
+create table settings(
+  id integer primary key autoincrement,
+  font_size integer not null,
+  is_show_romaji boolean not null,
+  native_text_color varchar(25) not null,
+  schedule varchar(25) not null,
+  theme varchar(25) not null,
+  initial_app boolean not null
 );
-
-
 
 -- INSERT
 insert into header(name) values
@@ -68,12 +67,7 @@ insert into list(library_id, korea, romaji, mean) values
   (3, "안녕하세요", "annyeonghaseyo", "မဂ်လာပါ")  -- 3 - တွေ့စုံခြင်း
 ;
 
-insert into choose(library_id, list_id, word) values
-  (1, 1, "ㄴ (니은)"),
-  (1, 1, "ㄷ (디귿)"),
-  (1, 1, "ㅅ (시옷)"),
 
-  (2, 3, "ㅏ"),
-  (2, 3, "ㅣ"),
-  (2, 3, "ㅕ")
-;
+insert into settings(font_size, is_show_romaji, native_text_color, schedule, theme, initial_app) values
+  (12, false, "blue", "1h", "light", true);
+

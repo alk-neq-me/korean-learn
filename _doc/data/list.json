@@ -1,0 +1,20 @@
+{
+  "rows": [
+    {
+      "library_id": 1,
+      "mean": "ဂီယောက်",
+      "korea": "ㄱ (기역)",
+      "romaji": "g (giyeok)",
+      "fav": false,
+      "record": null
+    },
+    {
+      "library_id": 1,
+      "mean": "န (နီအွန်း)",
+      "korea": "ㄴ (니은)",
+      "romaji": "n (nieun)",
+      "fav": false,
+      "record": null
+    }
+  ]
+}

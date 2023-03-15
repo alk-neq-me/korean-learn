@@ -16,7 +16,7 @@ export default function() {
     <Stack.Navigator
 			initialRouteName="Intro"
 			screenOptions={{
-        headerShown: true,
+        headerShown: false,
         headerStyle: {
           backgroundColor: "#fdba74",
         },
