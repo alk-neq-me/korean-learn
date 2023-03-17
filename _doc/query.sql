@@ -33,7 +33,7 @@ create table list(
 create table settings(
   id integer primary key autoincrement,
   font_size integer not null,
-  is_show_romaji boolean not null,
+  is_show_romaji boolean,
   native_text_color varchar(25) not null,
   schedule varchar(25) not null,
   theme varchar(25) not null,

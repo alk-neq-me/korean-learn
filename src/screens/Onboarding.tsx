@@ -1,12 +1,11 @@
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { useNavigation } from '@react-navigation/native';
 import { FlatList } from 'native-base';
 import { useRef, useState } from 'react';
 import { View, StyleSheet, ImageSourcePropType, Animated, ViewToken } from 'react-native';
-import { RootScreenParamList } from '..';
 import NextButton from '../components/next-button';
 import OnboardingItem from '../components/onboarding-item';
 import Paginator from '../components/paginator';
+import { useStateContext } from '../context';
+import { initialApp } from '../context/actions/settings.actions';
 import slides from '../utilits/slides';
 
 
@@ -18,10 +17,11 @@ export type Item = {
 };
 
 export default function Onboarding() {
+  const { dispatch } = useStateContext();
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
 
-  const navigation = useNavigation<DrawerNavigationProp<RootScreenParamList>>();
 
   const viewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     if (viewableItems[0]?.index !== null)
@@ -36,7 +36,7 @@ export default function Onboarding() {
     if (currentIndex < slides.length - 1) {
       sildesRef.current.scrollToIndex({ index: currentIndex + 1 });
     } else {
-      navigation.navigate("Home");
+      dispatch(initialApp());
     }
   };
 

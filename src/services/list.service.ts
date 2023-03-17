@@ -1,4 +1,5 @@
 import { Dispatch } from "../context";
+import * as FileSystem from 'expo-file-system';
 import { ListState, UnpackType } from "../context/type";
 import createQueryFilter from "../utilits/create-query-filter";
 import { serviceQuery } from "./service-query";
@@ -67,5 +68,14 @@ export default class ListService {
     serviceQuery("UPDATE list SET record = ? WHERE id = ?", [uri, list.id], (_result) => {
       dispatch({ type: "SET_AUDIO_LIST", payload: { ...list, record: uri } });
     });
-  }
+  };
+
+  static async clearRecordFiles(dispatch: Dispatch, list: (string | undefined)[] | undefined) {
+    if (!list) return;
+    dispatch({ type: "CLEAR_ALL_RECORDS_LIST" });
+    serviceQuery("UPDATE list SET record = null", [], (_) => { })
+    for (const i of list) {
+      if (i) await FileSystem.deleteAsync(i);
+    };
+  };
 };

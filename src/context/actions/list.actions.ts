@@ -54,3 +54,15 @@ export const createAudio = (list: UnpackType<ListState, "rows">[0], uri: string 
     dispatch({ type: "FETCH_ERROR_LIST", payload: errMassage });
   };
 };
+
+export const deleteAllRecords = (): ActionAsync => async (dispatch, state) => {
+  dispatch({ type: "REQUEST_LIST" });
+  const list = state?.list.rows.map(row => row.record);
+  try {
+    await ListService.clearRecordFiles(dispatch, list);
+  } catch (err) {
+    let errMassage = "unknoen error";
+    if (err instanceof Error) errMassage = err.message;
+    dispatch({ type: "FETCH_ERROR_LIST", payload: errMassage });
+  };
+};

@@ -4,6 +4,7 @@ import * as Clipboard from 'expo-clipboard';
 import { useCallback } from "react";
 import { ListState, UnpackType } from "../context/type";
 import { Recording } from "expo-av/build/Audio";
+import { useStateContext } from "../context";
 
 type Props = {
   list: UnpackType<ListState, "rows">[0];
@@ -22,6 +23,13 @@ type Props = {
 
 export default function ExpandableListItem(props: Props) {
   const { list, handleToggleFavorite, expendedList, onToggleExpend, recording, startRecording, stopRecording, isPlaying, handleStopPlayAudio, handlePlayAudio } = props;
+  const { state: {
+    settings: {
+      setting: {
+        is_show_romaji
+      }
+    }
+  } } = useStateContext();
 
   const toast = useToast();
 
@@ -34,13 +42,12 @@ export default function ExpandableListItem(props: Props) {
 
   return (
     <VStack
-      shadow="xl"
       overflow="hidden"
       w="full"
       p={2}
       justifyContent="flex-start"
       alignItems="flex-start"
-      borderBottomWidth={1}
+      borderBottomWidth={0.2}
       borderColor="gray.500"
     >
       <HStack w="full" alignItems="center" justifyContent="space-between">
@@ -59,9 +66,11 @@ export default function ExpandableListItem(props: Props) {
 
       <HStack w="full" display={expendedList === list.id ? "flex" : "none"} alignItems="center" justifyContent="space-between">
         <VStack space={1} alignItems="flex-start">
-          <Text fontSize="sm" color="green.500">{list.romaji}</Text>
+          <Text fontSize="sm" color="green.500"
+            display={is_show_romaji ? "flex" : "none"}
+          >{list.romaji}</Text>
           <Text fontSize="sm" color="black">{list.mean}</Text>
-          <HStack>
+          <HStack alignItems={"center"}>
             <IconButton
               borderRadius={100}
               onPress={recording ? () => stopRecording(list) : () => startRecording(list)}

@@ -40,6 +40,11 @@
           "microphonePermission": "Allow me to access your microphone"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d5369667-9e1a-4abd-a7bb-1b18b2e7a0de"
+      }
+    }
   }
 }

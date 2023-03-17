@@ -1,7 +1,7 @@
 type Library = {
-	id: number;
-	section: string;
-	header_id: number;
+  id: number;
+  section: string;
+  header_id: number;
 };
 
 type List = {
@@ -11,49 +11,54 @@ type List = {
   mean: string;
   fav: boolean;
   record?: string;
-	library_id?: number;
-	library_name?: string;
+  library_id?: number;
+  library_name?: string;
 };
 
 type Music = {
-	id_?: string;
-	title: string;
-	description?: string;
-	videoId: string;
-	thumbnails?: string;	
-	playing: boolean;
+  id_?: string;
+  title: string;
+  description?: string;
+  videoId: string;
+  thumbnails?: string;
+  playing: boolean;
 };
 
 type Settings = {
-	theme: 
-		| "light"
-		| "dark";
-	schedule: 
-		| "disable"
-		| "15m"
-		| "30m"
-		| "1h"
-		| "3h"
-		| "5h";
-	native_text_color: 
-		| "black"
-		| "blue"
-		| "green"
-		| "orange"
-		| "pink"
-		| "purple"
-		| "gray"
-		| "teal";
-	font_size: number;  // 14px to 23px
-	is_show_romaji: boolean;
-	initial_app: boolean;
+  theme:
+  | "light"
+  | "dark";
+  schedule:
+  | "disable"
+  | "15m"
+  | "30m"
+  | "1h"
+  | "3h"
+  | "5h";
+  native_text_color:
+  | "black"
+  | "blue"
+  | "green"
+  | "orange"
+  | "pink"
+  | "purple"
+  | "gray"
+  | "teal";
+  font_size:
+  | "xs"
+  | "sm"
+  | "md"
+  | "lg"
+  | "xl";  // 14px to 23px
+  is_show_romaji: boolean;
+  initial_app?: boolean;
 };
 
 /// ---------  Application State  ---------
 
 export type BaseType = {
-	loading: boolean;
-	error?: string;
+  loading: boolean;
+  error?: string;
 };
 
 export type UnpackType<T, K extends keyof T> = T[K] extends (infer U) ? U : never;

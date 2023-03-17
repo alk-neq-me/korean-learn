@@ -7,15 +7,23 @@ const dbFile = "sqlite.db";
 export async function openDatabase(): Promise<SQLite.WebSQLDatabase> {
   /// Create if not exists SQLite in System Directory
   if (!(await FileSystem.getInfoAsync(FileSystem.documentDirectory + "SQLite")).exists) {
-    await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + "SQLite");
+    try {
+      await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + "SQLite");
+    } catch (err) {
+      console.log("Cant Create", err);
+    }
   }
   /// Copy database.db if not exists to System Directory
   if (!(await FileSystem.getInfoAsync(FileSystem.documentDirectory + `SQLite/${dbFile}`)).exists) {
-    await FileSystem.downloadAsync(
-      Asset.fromModule(require(`../assets/${dbFile}`)).uri,
-      FileSystem.documentDirectory + `SQLite/${dbFile}`
-    );
-  } else SQLite.openDatabase(dbFile).closeAsync()
+    try {
+      await FileSystem.downloadAsync(
+        Asset.fromModule(require(`../assets/${dbFile}`)).uri,
+        FileSystem.documentDirectory + `SQLite/${dbFile}`
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  }// else SQLite.openDatabase(dbFile).closeAsync()
 
   return SQLite.openDatabase(dbFile, "1.0", "korea leanguage learning application", undefined, (db) => {
     db.exec([{

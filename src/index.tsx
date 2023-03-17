@@ -7,8 +7,10 @@ import Setting from "./screens/Setting";
 import About from "./screens/About";
 import List from "./screens/List";
 import Quiz from "./screens/Quiz";
-import Onboarding from "./screens/Onboarding";
 import { useStateContext } from "./context";
+import { useEffect } from "react";
+import { initSettings } from "./context/actions/settings.actions";
+import { getLibraries } from "./context/actions/library.actions";
 
 export type RootScreenParamList = {
   Home: undefined;
@@ -27,18 +29,16 @@ const Drawer = createDrawerNavigator();
 
 export default function App() {
   const {
-    state: {
-      settings: {
-        setting: {
-          initial_app
-        }
-      }
-    }
+    dispatch,
   } = useStateContext();
+
+  useEffect(() => {
+    dispatch(initSettings());
+  }, []);
 
   return (
     <Drawer.Navigator
-      initialRouteName={initial_app ? "Onboarding" : "Home"}
+      initialRouteName={"Home"}
       drawerContent={props => <SlideBar {...props} />}
       screenOptions={{
         headerShown: false,
@@ -47,7 +47,6 @@ export default function App() {
       }}
     >
       <Drawer.Screen name="Home" component={Home} />
-      <Drawer.Screen name="Onboarding" component={Onboarding} />
       <Drawer.Screen name="List" component={List} initialParams={{ screenMode: "list" }} />
       <Drawer.Screen name="Music" component={Music} />
       <Drawer.Screen name="Grammar" component={Grammar} />

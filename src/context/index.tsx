@@ -22,6 +22,7 @@ export type ActionTypeEnum =
   | "FETCH_ERROR_LIST"
   | "TOGGLE_FAV_LIST"
   | "SET_AUDIO_LIST"
+  | "CLEAR_ALL_RECORDS_LIST"
 
   /// Music List
   | "REQUEST_MUSIC_LIST"
@@ -40,7 +41,10 @@ export type ActionTypeEnum =
 
   /// Settings
   | "REQUEST_SETTINGS"
+  | "SUCCESS_SETTINGS"
+  | "UPDATE_SETTINGS"
   | "INITIAL_APP_SETTINGS"
+  | "UNINITIAL_APP_SETTINGS"
   | "FETCH_ERROR_SETTINGS"
   ;
 
@@ -50,6 +54,8 @@ type Payload =
   | UnpackType<ListState, "rows"> 		// success List
   | UnpackType<ListState, "rows">[0] 		// update record List
   | UnpackType<MusicListState, "rows"> 		// success Music List
+  | UnpackType<SettingsState, "setting"> 		// success Settings List
+  | Partial<UnpackType<SettingsState, "setting">> 		// update Settings List
   | number 		// id_
   | UnpackType<MusicState, "music">  		// create Music
   | string		// error fetch for selected music
@@ -96,12 +102,12 @@ const initialState: State = {
   }),
 
   settings: getBaseState<SettingsState, "setting">("setting", {
-    font_size: 12,
-    is_show_romaji: true,
+    font_size: "md",
+    is_show_romaji: false,
     native_text_color: "black",
     schedule: "1h",
     theme: "light",
-    initial_app: true,
+    initial_app: false
   }),
 };
 
@@ -162,6 +168,19 @@ const reducer = (state: State, action: Action): State => {
             : state.list.rows
         }
       };
+    case "CLEAR_ALL_RECORDS_LIST":
+      return {
+        ...state,
+        list: {
+          ...state.list,
+          loading: false,
+          error: undefined,
+          rows: state.list.rows.map(row => ({
+            ...row,
+            record: undefined
+          }))
+        }
+      }
 
     /// Music List
     case "REQUEST_MUSIC_LIST":
@@ -268,6 +287,16 @@ const reducer = (state: State, action: Action): State => {
           error: undefined
         }
       };
+    case "SUCCESS_SETTINGS":
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          loading: false,
+          error: undefined,
+          setting: ("payload" in action) ? { ...state.settings.setting, ...action.payload as UnpackType<SettingsState, "setting"> } : state.settings.setting
+        }
+      };
     case "INITIAL_APP_SETTINGS":
       return {
         ...state,
@@ -279,6 +308,29 @@ const reducer = (state: State, action: Action): State => {
             ...state.settings.setting,
             initial_app: false
           }
+        }
+      };
+    case "UNINITIAL_APP_SETTINGS":
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          loading: false,
+          error: undefined,
+          setting: {
+            ...state.settings.setting,
+            initial_app: true
+          }
+        }
+      };
+    case "UPDATE_SETTINGS":
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          loading: false,
+          error: undefined,
+          setting: ("payload" in action) ? { ...state.settings.setting, ...action.payload as Partial<UnpackType<SettingsState, "setting">> } : state.settings.setting
         }
       };
     case "FETCH_ERROR_SETTINGS":

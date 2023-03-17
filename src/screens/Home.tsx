@@ -10,7 +10,7 @@ import FullLoading from '../components/full-loading';
 import FullErrorPage from '../components/full-error';
 import { getLibraries } from '../context/actions/library.actions';
 import { getListByLibraryId } from '../context/actions/list.actions';
-import { initialApp } from '../context/actions/settings.actions';
+import Onboarding from './Onboarding';
 
 type Props = {
   navigation: DrawerNavigationProp<RootScreenParamList, "Home">;
@@ -30,26 +30,17 @@ const Home = (props: Props) => {
 
   const { width } = useWindowDimensions();
 
-  const rows = library.rows;
-  const loading = library.loading || settings.loading;
-  const error = library.error || settings.error;
-
   const isInitialApp = settings.setting.initial_app;
 
   useEffect(() => {
-    if (!isInitialApp) {
-      dispatch(getLibraries({
-        filter: {}
-      }));
-    } else {
-      console.log("need to false", isInitialApp)
-      dispatch(initialApp());
-      // console.log("to false initial app");
-      dispatch(getLibraries({
-        filter: {}
-      }));
-    }
-  }, [isInitialApp]);
+    dispatch(getLibraries({
+      filter: {}
+    }));
+  }, []);
+
+  const rows = library.rows;
+  const loading = library.loading || settings.loading;
+  const error = library.error || settings.error;
 
   const navigate = useCallback((id_: number) => {
     dispatch(getListByLibraryId(id_));
@@ -67,6 +58,11 @@ const Home = (props: Props) => {
       <FullErrorPage error="404" />
     );
   };
+
+  if (isInitialApp) {
+    console.log("show Onboarding")
+    return <Onboarding />
+  }
 
   return (
     <SafeAreaView>

@@ -6,7 +6,10 @@ import { RootScreenParamList } from "..";
 const sharedUri = "https://play.google.com/store/apps/details?id=com.marcoexexx.marco&hl=en_US&gl=US"
 
 export default function SlideBar(props: DrawerContentComponentProps) {
-  const { navigation } = props;
+  const { navigation, state } = props;
+
+  const currentRoute = state.routeNames[state.index];
+
   const pagesField: (keyof RootScreenParamList)[] = ["Home", "Music", "Grammar", "Quiz", "Setting"];
 
   const handleShare = useCallback(async () => {
@@ -30,7 +33,9 @@ export default function SlideBar(props: DrawerContentComponentProps) {
   return (
     <DrawerContentScrollView {...props}>
       {pagesField.map((field, index) => (
-        <DrawerItem key={index} label={field} onPress={() => navigation.navigate(field)} />
+        <DrawerItem key={index} label={field} onPress={() => navigation.navigate(field)} style={{
+          backgroundColor: currentRoute === field ? "#a5b4fc" : "#fff",
+        }} />
       ))}
       <DrawerItem label="Share" onPress={handleShare} />
       <DrawerItem label="Rate me" onPress={handleRateMe} />

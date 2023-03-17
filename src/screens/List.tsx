@@ -177,7 +177,9 @@ export default function List(props: Props) {
       <Masthead animatedValue={offset} image={require("../../assets/images/trajectory-education.png")} title={getTitle()}>
         {screenMode
           ? screenMode === "list" || screenMode == "favorite"
-            ? <Navbar section={rows[0].library_id} />
+            ? rows[0]?.library_id
+              ? <Navbar section={rows[0].library_id} />
+              : null
             : null
           : null
         }
@@ -191,6 +193,7 @@ export default function List(props: Props) {
       <FlatList
         data={rows}
         contentContainerStyle={{
+          backgroundColor: "#fff",
           paddingTop: 229,
           paddingHorizontal: 0,
         }}

@@ -34,13 +34,6 @@ export default extendTheme({
     mute: "#62656b",
   },
   components: {
-    Text: {
-      baseStyle: ({ colorMode }: { colorMode: ColorMode }) => {
-        return {
-          color: colorMode === "dark" ? "gray.100" : "secondary.900"
-        }
-      }
-    }
   },
   config
 });

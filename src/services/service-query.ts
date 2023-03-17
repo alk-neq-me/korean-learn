@@ -18,15 +18,17 @@ export function serviceQuery(
           (_, result) => {
             callback(result);
           },
+          // /*
           (_, err) => {
             console.error(err);
             return false;
           },
+          // */
         );
       });
     })
     .catch(err => {
-      throw err;
+      console.error("SQL Failed", err);
     });
 };
 
