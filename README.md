@@ -1,6 +1,8 @@
 # Korea Handbook Mobile Application.
 
 This is my mobile learning application project.
+A redux thunk async-like function is written in `useContext` using only react's build-in context API.
+
 ## Features
  - grammar are free.
  - speaking is also available.
